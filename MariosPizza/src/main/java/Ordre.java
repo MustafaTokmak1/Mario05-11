@@ -14,7 +14,7 @@ public class Ordre {
         this.ordreID = counter;
         this.createTime = LocalDateTime.now();
         this.pizzaer = new ArrayList<>();
-        this.status = "CREATED";
+        this.status = "BESTILT";
         counter++;
     }
 
@@ -52,16 +52,27 @@ public class Ordre {
         }
         return price;
     }
+
+
+
+
     public String toString() {
         int price = this.getPrice();
-        String show = "";
-        String pizzaerStr = "@";
+        String tekstUdsnit = "";
+        String pizzaerStr = "";
         for(Pizza thisPizza: pizzaer) {
             pizzaerStr += thisPizza.toString();
         }
-        pizzaerStr += "@";
-        //show = String.format("%d phone: %d, %s, price: %d, status: %s\n",ordreID,phone,buketterStr,price, status);
-        show = String.format("%d;%d;%s;%d;%s",ordreID,name,pizzaerStr,price, status);
-        return show;
+
+        pizzaerStr += "";
+        tekstUdsnit = "Ordre id: " + ordreID + "....... Kundenavn: " + name +
+                " Bestilte pizzaer......:" + "\n" + pizzaerStr
+                + "At betale: " + price + " kr......" + " Status på ordre: " + status
+        + " " + createTime;
+        return tekstUdsnit;
+
     }
+
+
+
 }

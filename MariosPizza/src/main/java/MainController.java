@@ -26,20 +26,77 @@ public class MainController {
             switch(choice){
                 case 1: visMenukort();break;
                 case 2: lavOrdre();break;
-                /*case 3: afslutOrdre();break;
-                case 4: visAktiveOrdre();break;
-                case 5: visOmsætning();break;
-                case 6: afslutDagen();break;
-                case 9: exit();
-                default: fejl();break;
+                case 3: visAktiveOrdre();break;
+                //case 4: visDagenOrdrer();break;
+                //case 4: afslutOrdre();break;
 
-                 */
+                /*case 5: visOmsætning();break;
+                case 6: afslutDagen();break;
+                case 9: exit();*/
+                default: exit();break;
+
+
                 
             }
         }
-        System.out.println("farvel og tak");
+        System.out.println("Farvel og tak");
         
     }
+
+
+
+    private void exit() {
+        System.out.println("Farvel og tak");
+    }
+
+    private void visAktiveOrdre() {
+        int choice = 0;
+        scanner = new Scanner(System.in);
+        System.out.println("Vælg ordre-id for at færdiggøre ordre (99 for at forlade)");
+
+        for (Ordre ordre: bestillinger ) {
+            System.out.println(ordre);
+        }
+        choice = scanner.nextInt();
+        if (choice != 99) {
+            try {
+                Ordre ordre = getOrderById(choice);
+                ordre.setStatus("FÆRDIG");
+                saveOrder(ordre, "src/main/resources1/færdigeOrdrer.csv");
+            }catch (IOException e) {
+                e.printStackTrace();
+            }catch (NoSuchOrderException e) {
+                e.getMessage();
+            }
+        }
+
+    }
+
+
+    private void saveOrder(Ordre ordre, String path) throws IOException {
+        File file = new File(path);
+        FileWriter fw = new FileWriter(file,true);
+        BufferedWriter bw = new BufferedWriter(fw);
+        bw.write(ordre.toString());
+        bw.newLine();
+        bw.close();
+        fw.close();
+    }
+
+
+    private Ordre getOrderById(int id) throws NoSuchOrderException {
+            Ordre retVal = null;
+            for(Ordre ordre:bestillinger) {
+                if (ordre.getOrdreID() == id) {
+                    return ordre;
+                }
+            }
+            if (retVal == null) {
+                throw new NoSuchOrderException("Ingen ordrer med id: " + id);
+            }
+            return retVal;
+        }
+
 
 
 
@@ -58,12 +115,12 @@ public class MainController {
 
        while (pizzaNumber!=99) {
 
-                System.out.println("Pizza nr (99 for exit)");
+                System.out.println("Pizza nr? (99 for at forlade)");
                 pizzaNumber = scanner.nextInt();
 
                 if (pizzaNumber != 99) {
                     try {
-                        pizza = getPizzaByNumber(pizzaNumber);
+                        pizza = getPizzaByNumber(pizzaNumber-1);
                         ordre.addPizza(pizza);
                     } catch (NoSuchPizzaException e) {
                         e.printStackTrace();
@@ -72,16 +129,12 @@ public class MainController {
                 }
 
             }
-       /*
-        BufferedWriter writer = new BufferedWriter(new FileWriter(new File("src/main/resources1/gemtPizza.csv")));
-       writer.write(String.valueOf(pizza));
-       writer.close();*/
 
        while(!verify){
             verify = editOrder(ordre);
         }
         bestillinger.add(ordre);
-        //menuImp.printMainMenu();
+        saveOrder(ordre,"src/main/resources1/aktiveOrdrer.csv");
     }
 
     private boolean editOrder(Ordre ordre) {
